@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3eee6">
+  <meta name="description" content="OffPay UPI prepares secure USSD payments from a QR code or UPI ID without mobile data.">
+  <title>OffPay UPI | Pay without mobile data</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    :root {
+      --ink: #17122e;
+      --muted: #716b86;
+      --paper: #f7f6fc;
+      --panel: #ffffff;
+      --line: #e9e6f2;
+      --violet: #5f259f;
+      --violet-dark: #351467;
+      --lilac: #eee5ff;
+      --pink: #ff4f9a;
+      --green: #caff6a;
+      --shadow: 0 20px 60px rgba(76, 42, 127, .12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Manrope, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    .shell { max-width: 1160px; margin: auto; padding: 0 24px; }
+    header { padding: 20px 0; border-bottom: 1px solid var(--line); background: rgba(255, 255, 255, .82); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 4; }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.04em; font-size: 1.2rem; }
+    .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; background: linear-gradient(145deg, #7e42c3, var(--violet-dark)); color: white; border-radius: 12px; font-family: "DM Mono", monospace; font-size: .85rem; box-shadow: 0 7px 16px rgba(95, 37, 159, .25); }
+    .nav a { color: var(--muted); text-decoration: none; font-size: .86rem; font-weight: 700; }
+    .nav-links { display: flex; gap: 24px; }
+    .hero { position: relative; display: grid; grid-template-columns: 1.05fr .95fr; gap: 70px; padding: 78px 0 88px; align-items: center; }
+    .hero::before { content: ""; position: absolute; width: 430px; height: 430px; left: -240px; top: 8px; border-radius: 50%; background: #ede5ff; filter: blur(2px); z-index: -1; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; color: var(--violet); font: 500 .75rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 0 5px #ffe1ef; }
+    h1 { margin: 18px 0 20px; max-width: 620px; font-size: clamp(3.2rem, 7vw, 6.8rem); line-height: .92; letter-spacing: -.08em; font-weight: 800; }
+    .hero-copy { max-width: 490px; color: var(--muted); font-size: 1.08rem; }
+    .hero-copy strong { color: var(--ink); }
+    .trust-line { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 28px; font: 500 .75rem "DM Mono", monospace; color: var(--muted); }
+    .trust-line span::before { content: "✓"; color: var(--violet); margin-right: 6px; font-weight: 700; }
+    .payment-card { position: relative; padding: 28px; background: var(--panel); border: 1px solid #eeeaf8; box-shadow: var(--shadow); border-radius: 24px; animation: float-in .8s .15s both cubic-bezier(.2,.7,.2,1); }
+    .payment-card::before { content: ""; position: absolute; width: 105px; height: 105px; right: -42px; top: -42px; background: var(--green); border-radius: 50%; z-index: -1; animation: bob 5s ease-in-out infinite; }
+    .card-kicker { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font: 500 .72rem "DM Mono", monospace; text-transform: uppercase; color: var(--muted); }
+    .status { display: inline-flex; align-items: center; gap: 7px; color: var(--violet); }
+    .status::before { content: ""; width: 7px; height: 7px; background: #54c58c; border-radius: 50%; box-shadow: 0 0 0 4px #ddf7e9; }
+    .scan-zone { display: grid; place-items: center; min-height: 220px; padding: 20px; border: 1px dashed #c9b8e9; border-radius: 16px; background: linear-gradient(145deg, #faf8ff, #f2ecff); text-align: center; }
+    #reader { width: 100%; max-width: 300px; overflow: hidden; }
+    #reader video { border-radius: 4px; }
+    .scan-placeholder { max-width: 230px; }
+    .scan-icon { width: 54px; height: 54px; margin: 0 auto 15px; display: grid; place-items: center; border: 2px solid var(--violet); border-radius: 16px; color: var(--violet); font-size: 1.5rem; animation: pulse 2.4s ease-in-out infinite; }
+    .scan-placeholder p { margin: 0 0 17px; font-size: .9rem; font-weight: 700; }
+    .button, button { border: 0; cursor: pointer; font: 700 .88rem Manrope, sans-serif; }
+    .button { display: inline-flex; justify-content: center; align-items: center; min-height: 46px; padding: 0 18px; text-decoration: none; }
+    .button-dark { color: white; background: var(--violet); border-radius: 12px; box-shadow: 0 8px 18px rgba(95, 37, 159, .2); }
+    .button-lime { color: var(--violet-dark); background: var(--green); border-radius: 12px; }
+    .button-quiet { color: var(--violet); background: white; border: 1px solid #d9c9f2; border-radius: 12px; }
+    .button { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(95, 37, 159, .16); }
+    .button:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 21px 0; color: var(--muted); font: 500 .7rem "DM Mono", monospace; text-transform: uppercase; }
+    .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+    .manual-row { display: grid; grid-template-columns: 1fr 112px; gap: 8px; }
+    input { min-width: 0; width: 100%; height: 46px; padding: 0 13px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: white; font: 500 .9rem "DM Mono", monospace; }
+    input::placeholder { color: #9b9a91; }
+    .amount-row { display: none; grid-template-columns: 1fr 112px; gap: 8px; margin-top: 8px; }
+    .amount-row.visible { display: grid; }
+    .helper { margin: 12px 0 0; color: var(--muted); font-size: .73rem; }
+    .alert { display: none; margin-top: 14px; padding: 11px 13px; background: #fff0e9; color: #943d23; font-size: .78rem; }
+    .alert.visible { display: block; }
+    .payment-details { display: none; margin-top: 18px; padding: 15px; background: #f0f6d9; font-size: .82rem; }
+    .payment-details.visible { display: block; }
+    .detail-line { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; }
+    .detail-line span:first-child { color: var(--muted); }
+    .detail-line span:last-child { max-width: 65%; overflow-wrap: anywhere; text-align: right; font-family: "DM Mono", monospace; }
+    .instructions { padding: 76px 0 88px; border-top: 1px solid var(--line); background: white; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 35px; }
+    h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.7rem); line-height: 1; letter-spacing: -.06em; }
+    .section-heading p { max-width: 310px; margin: 0; color: var(--muted); font-size: .9rem; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .step { min-height: 205px; padding: 25px; background: white; transition: transform .35s ease, background .35s ease; }
+    .step:hover { transform: translateY(-7px); background: #faf8ff; }
+    .step-num { color: var(--pink); font: 500 .8rem "DM Mono", monospace; }
+    .step h3 { margin: 38px 0 9px; font-size: 1.15rem; letter-spacing: -.03em; }
+    .step p { margin: 0; color: var(--muted); font-size: .84rem; }
+    .why { display: grid; grid-template-columns: .75fr 1.25fr; gap: 80px; padding: 80px 0; border-top: 1px solid var(--line); }
+    .why-intro p { color: var(--muted); font-size: .95rem; }
+    .reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
+    .reason { border-top: 1px solid var(--line); padding-top: 15px; transition: transform .35s ease; }
+    .reason:hover { transform: translateX(5px); }
+    .reason h3 { margin: 0 0 6px; font-size: .95rem; }
+    .reason p { margin: 0; color: var(--muted); font-size: .82rem; }
+    footer { padding: 25px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; }
+    .footer-row { display: flex; justify-content: space-between; gap: 20px; }
+    .modal { display: none; position: fixed; inset: 0; z-index: 5; place-items: center; padding: 20px; background: rgba(24, 34, 29, .65); }
+    .modal.open { display: grid; }
+    .modal-card { width: min(430px, 100%); padding: 28px; background: var(--panel); border-radius: 22px; box-shadow: var(--shadow); animation: float-in .35s both cubic-bezier(.2,.7,.2,1); }
+    .modal-card h2 { font-size: 2rem; margin-bottom: 13px; }
+    .modal-card p { color: var(--muted); font-size: .88rem; }
+    .modal-card ol { padding-left: 20px; color: var(--ink); font-size: .9rem; }
+    .modal-card li { padding: 5px 0; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 25px; }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @keyframes float-in { from { opacity: 0; transform: translateY(24px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(10px) rotate(8deg); } }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(95, 37, 159, .18); } 50% { box-shadow: 0 0 0 9px rgba(95, 37, 159, 0); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+    @media (max-width: 760px) {
+      .shell { padding: 0 18px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 40px; padding: 55px 0 65px; }
+      h1 { font-size: clamp(3.4rem, 17vw, 5.5rem); }
+      .payment-card { padding: 20px; }
+      .section-heading, .why { grid-template-columns: 1fr; display: grid; gap: 20px; }
+      .steps, .reasons { grid-template-columns: 1fr; }
+      .step { min-height: auto; }
+      .step h3 { margin-top: 24px; }
+      .why { padding: 60px 0; gap: 38px; }
+      .footer-row { display: block; }
+      .footer-row span { display: block; margin-top: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell nav">
+      <a class="brand" href="#top" aria-label="OffPay UPI home"><span class="brand-mark">↗</span> OffPay UPI</a>
+      <nav class="nav-links" aria-label="Main navigation"><a href="#how">How it works</a><a href="#why">Why OffPay</a></nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="shell hero">
+      <div>
+        <span class="eyebrow">No data. No app. Just pay.</span>
+        <h1>UPI,<br>off the grid.</h1>
+        <p class="hero-copy">Prepare a payment from a QR code or UPI ID, then finish it through your phone's secure <strong>*99# USSD dialer</strong>. Your payment details stay in this browser.</p>
+        <div class="trust-line"><span>Local-first</span><span>USSD ready</span><span>Built for low signal</span></div>
+      </div>
+
+      <section class="payment-card" aria-labelledby="payment-title">
+        <div class="card-kicker"><span id="payment-title">Start a payment</span><span class="status">Ready</span></div>
+        <div class="scan-zone" id="scanZone">
+          <div class="scan-placeholder" id="scanPlaceholder">
+            <div class="scan-icon">⌁</div>
+            <p>Scan a merchant QR code</p>
+            <button class="button button-dark" id="scanButton" type="button">Open camera</button>
+          </div>
+          <div id="reader" hidden></div>
+        </div>
+        <div class="divider">or enter UPI ID</div>
+        <div class="manual-row">
+          <input id="upiInput" type="text" placeholder="merchant@bank" autocomplete="off" spellcheck="false" aria-label="Merchant UPI ID">
+          <button class="button button-quiet" id="useUpiButton" type="button">Use ID</button>
+        </div>
+        <div class="amount-row" id="amountRow">
+          <input id="amountInput" type="number" min="1" max="5000" step="0.01" placeholder="Amount (optional)" aria-label="Payment amount in rupees">
+          <button class="button button-lime" id="payButton" type="button">Pay securely</button>
+        </div>
+        <p class="helper">We never ask for your UPI PIN. Enter it only in your bank's dialer or app.</p>
+        <div class="alert" id="alert" role="alert"></div>
+        <div class="payment-details" id="paymentDetails" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <section class="instructions reveal" id="how">
+      <div class="shell">
+        <div class="section-heading"><h2>Three steps.<br>Zero fuss.</h2><p>OffPay turns a merchant QR into a clear handoff. The final authorization always happens with your bank.</p></div>
+        <div class="steps">
+          <article class="step reveal"><span class="step-num">01 / CAPTURE</span><h3>Scan or type</h3><p>Use your camera to read a UPI QR, or enter the merchant's UPI ID yourself.</p></article>
+          <article class="step reveal"><span class="step-num">02 / CHECK</span><h3>Review the details</h3><p>Confirm the UPI ID and amount. Never pay if the destination looks unfamiliar.</p></article>
+          <article class="step reveal"><span class="step-num">03 / DIAL</span><h3>Pay with *99#</h3><p>Tap Pay, then use the dialer. Choose Send Money and authorize with your UPI PIN.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell why reveal" id="why">
+      <div class="why-intro"><span class="eyebrow">Why use us</span><h2>Designed for the signal you have.</h2><p>Useful in a basement, on a slow connection, or with a simple phone. OffPay is a payment preparation tool, not a bank.</p></div>
+      <div class="reasons">
+        <article class="reason"><h3>Private by design</h3><p>QR and form values are processed in your browser. Nothing is sent to an OffPay server.</p></article>
+        <article class="reason"><h3>No install required</h3><p>Open it from a link on any modern browser. The camera is used only after you allow it.</p></article>
+        <article class="reason"><h3>Works without mobile data</h3><p>*99# uses your mobile network's signaling channel, so it does not need internet data.</p></article>
+        <article class="reason"><h3>You stay in control</h3><p>OffPay cannot move money or see your PIN. Your bank's secure flow completes the payment.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="shell footer-row"><strong>OffPay UPI</strong><span>Offline-ready does not mean network-free: *99# needs cellular signal.</span></div></footer>
+
+  <div class="modal" id="instructionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <span class="eyebrow">Next step</span>
+      <h2 id="modalTitle">Finish in your dialer</h2>
+      <p>OffPay has prepared the payment. Your bank will now handle authorization.</p>
+      <ol><li>Tap <strong>Pay</strong> in the dialer.</li><li>Choose <strong>Send Money</strong> and enter the merchant details shown.</li><li>Review everything, then enter your UPI PIN.</li></ol>
+      <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99%23">Open *99# dialer</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
+    </div>
+  </div>
+
+  <script>
+    const upiInput = document.getElementById('upiInput');
+    const amountInput = document.getElementById('amountInput');
+    const amountRow = document.getElementById('amountRow');
+    const paymentDetails = document.getElementById('paymentDetails');
+    const alertBox = document.getElementById('alert');
+    const modal = document.getElementById('instructionModal');
+    const reader = document.getElementById('reader');
+    const placeholder = document.getElementById('scanPlaceholder');
+    let qrScanner;
+
+    const revealItems = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14 });
+      revealItems.forEach((item, index) => {
+        item.style.transitionDelay = (index % 3) * 90 + 'ms';
+        revealObserver.observe(item);
+      });
+    } else {
+      revealItems.forEach(item => item.classList.add('visible'));
+    }
+
+    function showAlert(message) {
+      alertBox.textContent = message;
+      alertBox.classList.add('visible');
+    }
+
+    function clearAlert() { alertBox.classList.remove('visible'); }
+
+    function parseUpi(value) {
+      try {
+        const url = new URL(value);
+        if (url.protocol.toLowerCase() !== 'upi:' || url.host.toLowerCase() !== 'pay') return null;
+        return { id: url.searchParams.get('pa') || '', name: url.searchParams.get('pn') || '', amount: url.searchParams.get('am') || '' };
+      } catch (error) {
+        return value.trim().match(/^[\w.\-]+@[\w.\-]+$/) ? { id: value.trim(), name: '', amount: '' } : null;
+      }
+    }
+
+    function setPayment(details) {
+      if (!details || !details.id) { showAlert('Enter a valid UPI ID, such as merchant@bank.'); return; }
+      clearAlert();
+      upiInput.value = details.id;
+      if (details.amount) amountInput.value = details.amount;
+      amountRow.classList.add('visible');
+      paymentDetails.innerHTML = '<div class="detail-line"><span>Paying to</span><span>' + escapeHtml(details.name || 'Merchant') + '</span></div><div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div>';
+      paymentDetails.classList.add('visible');
+    }
+
+    function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
+
+    document.getElementById('useUpiButton').addEventListener('click', () => setPayment(parseUpi(upiInput.value)));
+    document.getElementById('payButton').addEventListener('click', () => {
+      const details = parseUpi(upiInput.value);
+      const amount = Number(amountInput.value);
+      if (!details) { showAlert('Please check the UPI ID before continuing.'); return; }
+      if (amountInput.value && (!Number.isFinite(amount) || amount < 1 || amount > 5000)) { showAlert('Enter an amount between ₹1 and ₹5,000.'); return; }
+      clearAlert();
+      document.getElementById('modalTitle').textContent = amountInput.value ? 'Pay ₹' + amount.toFixed(2) + ' securely' : 'Finish in your dialer';
+      modal.classList.add('open');
+    });
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
+
+    document.getElementById('scanButton').addEventListener('click', async () => {
+      placeholder.hidden = true;
+      reader.hidden = false;
+      try {
+        qrScanner = new Html5Qrcode('reader');
+        await qrScanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 220, height: 220 } }, decodedText => {
+          const details = parseUpi(decodedText);
+          if (!details) { showAlert('That QR is not a UPI payment QR.'); return; }
+          qrScanner.stop().catch(() => {});
+          reader.hidden = true;
+          placeholder.hidden = false;
+          setPayment(details);
+        }, () => {});
+      } catch (error) {
+        reader.hidden = true;
+        placeholder.hidden = false;
+        showAlert('Camera could not start. Check permission, or enter the UPI ID manually.');
+      }
+    });
+  </script>
+</body>
+</html>

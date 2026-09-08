@@ -191,7 +191,7 @@
           <input id="upiInput" type="text" placeholder="merchant@bank" autocomplete="off" spellcheck="false" aria-label="Merchant UPI ID">
           <button class="button button-quiet" id="useUpiButton" type="button">Use ID</button>
         </div>
-        <p class="helper">Format check only. We never ask for your UPI PIN. Enter your amount and PIN only in your bank's secure payment flow.</p>
+        <p class="helper">Format check only. We never ask for your UPI PIN. Enter your amount and PIN only in your bank's secure payment flow. The UPI ID is copied automatically when the payment is prepared.</p>
         <div class="alert" id="alert" role="alert"></div>
         <div class="payment-details" id="paymentDetails" aria-live="polite"></div>
         <div class="network-warning"><span aria-hidden="true">⚠</span><div><strong>Important: no mobile data does not mean no network.</strong><br><code>*99#</code> availability depends on your bank and mobile operator. Some Jio configurations may not support USSD.</div></div>
@@ -346,10 +346,11 @@
       clearAlert();
       currentDetails = details;
       upiInput.value = details.id;
-      paymentDetails.innerHTML = '<div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div>' + (details.name ? '<div class="detail-line"><span>Merchant</span><span>' + escapeHtml(details.name) + '</span></div>' : '') + (details.amount ? '<div class="detail-line"><span>Amount from QR</span><span>₹' + escapeHtml(details.amount) + '</span></div>' : '') + '<div class="copy-row"><button id="copyUpiButton" type="button">Copy UPI ID</button><span class="copy-status" id="copyStatus">Copying...</span></div>';
+      paymentDetails.innerHTML = '<div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div>' + (details.name ? '<div class="detail-line"><span>Merchant</span><span>' + escapeHtml(details.name) + '</span></div>' : '') + (details.amount ? '<div class="detail-line"><span>Amount from QR</span><span>₹' + escapeHtml(details.amount) + '</span></div>' : '') + '<div class="copy-row"><button id="copyUpiButton" type="button">Copy UPI ID</button><span class="copy-status" id="copyStatus">Auto-copying...</span></div>';
       paymentDetails.classList.add('visible');
-      copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied');
-      document.getElementById('copyUpiButton').addEventListener('click', () => copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied'));
+      const copyStatus = document.getElementById('copyStatus');
+      copyText(details.id, copyStatus, 'UPI ID copied automatically');
+      document.getElementById('copyUpiButton').addEventListener('click', () => copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied automatically'));
       openPaymentModal(details, source);
     }
 

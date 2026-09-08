@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f3eee6">
-  <meta name="description" content="OffPay UPI prepares secure USSD payments from a QR code or UPI ID without mobile data.">
-  <title>OffPay UPI | Pay without mobile data</title>
+  <meta name="description" content="Scan a UPI QR, extract the UPI ID, and continue payment through a supported USSD or bank flow without mobile data.">
+  <title>OffPay UPI — Pay UPI Without Mobile Data</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,6 +38,7 @@
     header { padding: 20px 0; border-bottom: 1px solid var(--line); background: rgba(255, 255, 255, .82); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 4; }
     .nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.04em; font-size: 1.2rem; }
+    .brand small { display: block; margin-left: 2px; color: var(--muted); font-size: .65rem; font-weight: 600; letter-spacing: 0; }
     .brand-mark { display: grid; place-items: center; width: 36px; height: 36px; background: linear-gradient(145deg, #7e42c3, var(--violet-dark)); color: white; border-radius: 12px; font-family: "DM Mono", monospace; font-size: .85rem; box-shadow: 0 7px 16px rgba(95, 37, 159, .25); }
     .nav a { color: var(--muted); text-decoration: none; font-size: .86rem; font-weight: 700; }
     .nav-links { display: flex; gap: 24px; }
@@ -45,7 +46,7 @@
     .hero::before { content: ""; position: absolute; width: 430px; height: 430px; left: -240px; top: 8px; border-radius: 50%; background: #ede5ff; filter: blur(2px); z-index: -1; }
     .eyebrow { display: inline-flex; gap: 8px; align-items: center; color: var(--violet); font: 500 .75rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
     .eyebrow::before { content: ""; width: 8px; height: 8px; background: var(--pink); border-radius: 50%; box-shadow: 0 0 0 5px #ffe1ef; }
-    h1 { margin: 18px 0 20px; max-width: 620px; font-size: clamp(3.2rem, 7vw, 6.8rem); line-height: .92; letter-spacing: -.08em; font-weight: 800; }
+    h1 { margin: 18px 0 20px; max-width: 620px; font-size: clamp(2.5rem, 6vw, 5.4rem); line-height: .94; letter-spacing: -.07em; font-weight: 800; }
     .hero-copy { max-width: 490px; color: var(--muted); font-size: 1.08rem; }
     .hero-copy strong { color: var(--ink); }
     .trust-line { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 28px; font: 500 .75rem "DM Mono", monospace; color: var(--muted); }
@@ -61,6 +62,7 @@
     .scan-placeholder { max-width: 230px; }
     .scan-icon { width: 54px; height: 54px; margin: 0 auto 15px; display: grid; place-items: center; border: 2px solid var(--violet); border-radius: 16px; color: var(--violet); font-size: 1.5rem; animation: pulse 2.4s ease-in-out infinite; }
     .scan-placeholder p { margin: 0 0 17px; font-size: .9rem; font-weight: 700; }
+    .scan-note { margin: 12px 0 0; color: var(--muted); font-size: .75rem; }
     .button, button { border: 0; cursor: pointer; font: 700 .88rem Manrope, sans-serif; }
     .button { display: inline-flex; justify-content: center; align-items: center; min-height: 46px; padding: 0 18px; text-decoration: none; }
     .button-dark { color: white; background: var(--violet); border-radius: 12px; box-shadow: 0 8px 18px rgba(95, 37, 159, .2); }
@@ -85,7 +87,7 @@
     .copy-row { display: flex; align-items: center; gap: 9px; margin-top: 11px; }
     .copy-row button { min-height: 36px; padding: 0 12px; color: var(--violet); background: white; border: 1px solid #d9c9f2; border-radius: 9px; font-size: .75rem; }
     .copy-status { color: var(--violet-dark); font-size: .72rem; }
-    .network-warning { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 13px 15px; color: #753c08; background: #fff4dc; border: 1px solid #f2d79b; border-radius: 12px; font-size: .76rem; }
+    .network-warning { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 13px 15px; color: #753c08; background: #fff4dc; border: 1px solid #f2d79b; border-radius: 12px; font-size: .8rem; }
     .network-warning strong { display: block; margin-bottom: 2px; color: #5e3005; }
     .instructions { padding: 76px 0 88px; border-top: 1px solid var(--line); background: white; }
     .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 35px; }
@@ -116,6 +118,12 @@
     .bank-choice strong { font-size: .88rem; }
     .bank-choice span { color: var(--muted); font: 500 .7rem "DM Mono", monospace; }
     .bank-check { margin-left: auto; color: #3e9b68; font-size: 1.2rem; }
+    .verify-state, .handoff-state { display: none; }
+    .verify-state.visible, .handoff-state.visible { display: block; }
+    .verify-state h2, .handoff-state h2 { display: block; margin: 12px 0 18px; font-size: clamp(1.8rem, 5vw, 3rem); line-height: 1; letter-spacing: -.06em; }
+    .detected-label { margin: 22px 0 8px; color: var(--violet); font: 500 .68rem "DM Mono", monospace; text-transform: uppercase; }
+    .detected-details { padding: 15px; background: #f5efff; border: 1px solid #ded0f5; border-radius: 15px; }
+    .security-note { margin-top: 16px; padding: 13px 15px; color: var(--violet-dark); background: #f0f6d9; border-radius: 12px; font-size: .8rem; }
     .modal-card p { color: var(--muted); font-size: .88rem; }
     .modal-card ol { padding-left: 20px; color: var(--ink); font-size: .9rem; }
     .modal-card li { padding: 5px 0; }
@@ -153,7 +161,7 @@
 <body>
   <header>
     <div class="shell nav">
-      <a class="brand" href="#top" aria-label="OffPay UPI home"><span class="brand-mark">↗</span> OffPay UPI</a>
+      <a class="brand" href="#top" aria-label="OffPay UPI home"><span class="brand-mark">↗</span><span>OffPay<small>Pay without mobile data</small></span></a>
       <nav class="nav-links" aria-label="Main navigation"><a href="#how">How it works</a><a href="#why">Why OffPay</a></nav>
     </div>
   </header>
@@ -161,10 +169,10 @@
   <main id="top">
     <section class="shell hero">
       <div>
-        <span class="eyebrow">No data. No app. Just pay.</span>
-        <h1>UPI,<br>off the grid.</h1>
-        <p class="hero-copy">Prepare a payment from a QR code or UPI ID, then finish it through your phone's secure <strong>*99# USSD dialer</strong>. Your payment details stay in this browser.</p>
-        <div class="trust-line"><span>first offline upi</span><span>USSD ready</span><span>Built for low signal</span></div>
+        <span class="eyebrow">No app. No mobile data.</span>
+        <h1>Pay UPI<br>without mobile data.</h1>
+        <p class="hero-copy">Scan a merchant QR, verify the UPI ID, and continue through a supported bank or USSD payment flow.</p>
+        <div class="trust-line"><span>cellular signal required</span><span>PIN stays with your bank</span></div>
       </div>
 
       <section class="payment-card" aria-labelledby="payment-title">
@@ -172,8 +180,9 @@
         <div class="scan-zone" id="scanZone">
           <div class="scan-placeholder" id="scanPlaceholder">
             <div class="scan-icon">⌁</div>
-            <p>Scan a merchant QR code</p>
-            <button class="button button-dark" id="scanButton" type="button">Open camera</button>
+            <p>Scan the merchant's UPI QR</p>
+            <button class="button button-dark" id="scanButton" type="button">📷 Scan QR</button>
+            <p class="scan-note">Cellular signal required. Availability depends on your bank and operator.</p>
           </div>
           <div id="reader" hidden></div>
         </div>
@@ -182,46 +191,59 @@
           <input id="upiInput" type="text" placeholder="merchant@bank" autocomplete="off" spellcheck="false" aria-label="Merchant UPI ID">
           <button class="button button-quiet" id="useUpiButton" type="button">Use ID</button>
         </div>
-        <p class="helper">We never ask for your UPI PIN, amount, or remark. Enter them only in your bank's secure dialer.</p>
+        <p class="helper">Format check only. We never ask for your UPI PIN. Enter your amount and PIN only in your bank's secure payment flow.</p>
         <div class="alert" id="alert" role="alert"></div>
         <div class="payment-details" id="paymentDetails" aria-live="polite"></div>
-        <div class="network-warning"><span aria-hidden="true">⚠</span><div><strong>Jio users: *99# may not work</strong>NUUP support depends on your mobile operator. Use a supported GSM network or your bank's official payment app.</div></div>
+        <div class="network-warning"><span aria-hidden="true">⚠</span><div><strong>Important: no mobile data does not mean no network.</strong><br><code>*99#</code> availability depends on your bank and mobile operator. Some Jio configurations may not support USSD.</div></div>
       </section>
     </section>
 
     <section class="instructions reveal" id="how">
       <div class="shell">
-        <div class="section-heading"><h2>Three steps.<br>Zero fuss.</h2><p>OffPay turns a merchant QR into a clear handoff. The final authorization always happens with your bank.</p></div>
+        <div class="section-heading"><h2>How OffPay works</h2><p>OffPay prepares the payment recipient. Your amount and UPI PIN are entered in your bank's payment flow.</p></div>
         <div class="steps">
-          <article class="step reveal"><span class="step-num">01 / CAPTURE</span><h3>Scan or type</h3><p>Use your camera to read a UPI QR, or enter the merchant's UPI ID yourself.</p></article>
-          <article class="step reveal"><span class="step-num">02 / CHECK</span><h3>Review the details</h3><p>Confirm the UPI ID and amount. Never pay if the destination looks unfamiliar.</p></article>
-          <article class="step reveal"><span class="step-num">03 / DIAL</span><h3>Pay with *99#</h3><p>Tap Pay, then use the dialer. Choose Send Money and authorize with your UPI PIN.</p></article>
+          <article class="step reveal"><span class="step-num">01 / SCAN</span><h3>Scan</h3><p>Scan the merchant's UPI QR code.</p></article>
+          <article class="step reveal"><span class="step-num">02 / VERIFY</span><h3>Verify</h3><p>Check the detected UPI ID and payment details.</p></article>
+          <article class="step reveal"><span class="step-num">03 / PAY</span><h3>Pay</h3><p>Continue through your supported bank or USSD payment flow.</p></article>
         </div>
       </div>
     </section>
 
     <section class="shell why reveal" id="why">
-      <div class="why-intro"><span class="eyebrow">Why use us</span><h2>Designed for the signal you have.</h2><p>Useful in a basement, on a slow connection, or with a simple phone. OffPay is a payment preparation tool, not a bank.</p></div>
+      <div class="why-intro"><span class="eyebrow">Trust and privacy</span><h2>Built for low-connectivity payments.</h2><p>OffPay prepares payment information locally where possible. Your bank handles authorization.</p></div>
       <div class="reasons">
-        <article class="reason"><h3>Private by design</h3><p>QR and form values are processed in your browser. Nothing is sent to an OffPay server.</p></article>
-        <article class="reason"><h3>No install required</h3><p>Open it from a link on any modern browser. The camera is used only after you allow it.</p></article>
-        <article class="reason"><h3>Works without mobile data</h3><p>*99# uses your mobile network's signaling channel, so it does not need internet data.</p></article>
-        <article class="reason"><h3>You stay in control</h3><p>OffPay cannot move money or see your PIN. Your bank's secure flow completes the payment.</p></article>
+        <article class="reason"><h3>No app required</h3><p>Use the website directly to prepare the recipient information.</p></article>
+        <article class="reason"><h3>No mobile data required</h3><p>The payment handoff can use a supported cellular USSD flow.</p></article>
+        <article class="reason"><h3>PIN stays private</h3><p>OffPay never asks for or collects your UPI PIN.</p></article>
+        <article class="reason"><h3>Payment stays with your bank</h3><p>OffPay does not process, authorize, or move money itself.</p></article>
       </div>
     </section>
   </main>
 
-  <footer><div class="shell footer-row"><strong>OffPay UPI</strong><span>Offline-ready does not mean network-free: *99# needs cellular signal.</span></div></footer>
+  <footer><div class="shell footer-row"><strong>OffPay UPI</strong><span>Pay UPI without mobile data. Cellular signal and supported bank/operator services are required.</span></div></footer>
 
-  <div class="modal" id="instructionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="instructionModal" role="dialog" aria-modal="true" aria-label="Payment details">
     <div class="modal-card">
-      <span class="eyebrow">Next step</span>
-      <p><strong>Payment instructions</strong><br>Copy the UPI ID, then use your bank's secure USSD flow to enter the UPI ID and amount yourself.</p>
-      <div class="bank-choice"><span class="bank-logo">UPI</span><div><strong>Your bank's secure dialer</strong><span>*99# works without mobile data</span></div><span class="bank-check" aria-hidden="true">✓</span></div>
-      <div class="dial-preview"><span class="dial-preview-label">UPI ID</span><code class="dial-string" id="upiPreview">merchant@bank</code><button class="button button-quiet" id="modalCopyUpiButton" type="button">Copy UPI ID</button></div>
-      <ol><li>Tap <strong>Pay securely</strong> to open your phone dialer.</li><li>Choose <strong>Send Money</strong>, then paste the UPI ID and enter the amount.</li><li>Review the details and enter your UPI PIN only in the bank flow.</li></ol>
-      <p class="modal-note">The shortcut is <strong>*99*1*3#</strong>. It needs cellular signal and may not work on Jio.</p>
-      <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99*1*3%23">Pay securely</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
+      <div class="verify-state visible" id="verifyState">
+        <span class="eyebrow" id="verifyKicker">QR detected ✓</span>
+        <h2>Verify payment details</h2>
+        <div class="detected-details">
+          <div class="detail-line"><span>UPI ID</span><span id="verifyUpiId">merchant@bank</span></div>
+          <div class="detail-line" id="verifyMerchantRow"><span>Merchant</span><span id="verifyMerchant">Merchant</span></div>
+          <div class="detail-line" id="verifyAmountRow"><span>Amount from QR</span><span id="verifyAmount"></span></div>
+        </div>
+        <p class="security-note"><strong>Payment recipient detected.</strong><br>OffPay prepares the recipient. Your amount and UPI PIN are entered in your bank's payment flow.</p>
+        <div class="modal-actions"><button class="button button-lime" id="continuePayment" type="button">Continue to payment</button><button class="button button-quiet" id="editPayment" type="button">Edit / scan again</button></div>
+      </div>
+      <div class="handoff-state" id="handoffState">
+        <span class="eyebrow">Payment ready ✓</span>
+        <h2>Complete your payment</h2>
+        <div class="bank-choice"><span class="bank-logo">UPI</span><div><strong>Supported bank / USSD flow</strong><span>Cellular signal required</span></div><span class="bank-check" aria-hidden="true">✓</span></div>
+        <div class="dial-preview"><span class="dial-preview-label">UPI ID</span><code class="dial-string" id="upiPreview">merchant@bank</code><button class="button button-quiet" id="modalCopyUpiButton" type="button">📋 Copy UPI ID</button></div>
+        <ol><li>Open <strong>*99#</strong> using the button below.</li><li>Select the appropriate money-transfer option.</li><li>Enter or confirm the UPI ID, then enter the amount.</li><li>Authorize with your UPI PIN in your bank's flow.</li></ol>
+        <p class="security-note"><strong>🔒 Your UPI PIN stays with your bank.</strong><br>OffPay does not process or authorize your payment.</p>
+        <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99*1*3%23">☎ Open *99#</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
+      </div>
     </div>
   </div>
 
@@ -232,6 +254,14 @@
     const modal = document.getElementById('instructionModal');
     const reader = document.getElementById('reader');
     const placeholder = document.getElementById('scanPlaceholder');
+    const verifyState = document.getElementById('verifyState');
+    const handoffState = document.getElementById('handoffState');
+    const verifyKicker = document.getElementById('verifyKicker');
+    const verifyUpiId = document.getElementById('verifyUpiId');
+    const verifyMerchantRow = document.getElementById('verifyMerchantRow');
+    const verifyMerchant = document.getElementById('verifyMerchant');
+    const verifyAmountRow = document.getElementById('verifyAmountRow');
+    const verifyAmount = document.getElementById('verifyAmount');
     const upiPreview = document.getElementById('upiPreview');
     const dialLink = document.getElementById('dialLink');
     const modalCopyUpiButton = document.getElementById('modalCopyUpiButton');
@@ -241,7 +271,10 @@
     async function copyText(value, statusElement, successText) {
       try {
         await navigator.clipboard.writeText(value);
-        if (statusElement) statusElement.textContent = successText;
+        if (statusElement) {
+          statusElement.textContent = successText;
+          window.setTimeout(() => { statusElement.textContent = ''; }, 2500);
+        }
       } catch (error) {
         const fallback = document.createElement('textarea');
         fallback.value = value;
@@ -251,14 +284,25 @@
         fallback.select();
         document.execCommand('copy');
         fallback.remove();
-        if (statusElement) statusElement.textContent = successText;
+        if (statusElement) {
+          statusElement.textContent = successText;
+          window.setTimeout(() => { statusElement.textContent = ''; }, 2500);
+        }
       }
     }
 
-    function openPaymentModal(details) {
+    function openPaymentModal(details, source) {
       currentDetails = details;
+      verifyKicker.textContent = source === 'qr' ? 'QR detected ✓' : 'UPI ID entered';
+      verifyUpiId.textContent = details.id;
+      verifyMerchantRow.hidden = !details.name;
+      verifyMerchant.textContent = details.name || '';
+      verifyAmountRow.hidden = !details.amount;
+      verifyAmount.textContent = details.amount ? '₹' + details.amount : '';
       upiPreview.textContent = details.id;
       dialLink.href = 'tel:*99*1*3%23';
+      verifyState.classList.add('visible');
+      handoffState.classList.remove('visible');
       modal.classList.add('open');
     }
 
@@ -297,21 +341,23 @@
       }
     }
 
-    function setPayment(details) {
+    function setPayment(details, source) {
       if (!details || !details.id) { showAlert('Enter a valid UPI ID, such as merchant@bank.'); return; }
       clearAlert();
       currentDetails = details;
       upiInput.value = details.id;
-      paymentDetails.innerHTML = '<div class="detail-line"><span>Paying to</span><span>' + escapeHtml(details.name || 'Merchant') + '</span></div><div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div><div class="copy-row"><button id="copyUpiButton" type="button">Copy UPI ID</button><span class="copy-status" id="copyStatus">Copying...</span></div>';
+      paymentDetails.innerHTML = '<div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div>' + (details.name ? '<div class="detail-line"><span>Merchant</span><span>' + escapeHtml(details.name) + '</span></div>' : '') + (details.amount ? '<div class="detail-line"><span>Amount from QR</span><span>₹' + escapeHtml(details.amount) + '</span></div>' : '') + '<div class="copy-row"><button id="copyUpiButton" type="button">Copy UPI ID</button><span class="copy-status" id="copyStatus">Copying...</span></div>';
       paymentDetails.classList.add('visible');
       copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied');
       document.getElementById('copyUpiButton').addEventListener('click', () => copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied'));
-      openPaymentModal(details);
+      openPaymentModal(details, source);
     }
 
     function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
 
-    document.getElementById('useUpiButton').addEventListener('click', () => setPayment(parseUpi(upiInput.value)));
+    document.getElementById('useUpiButton').addEventListener('click', () => setPayment(parseUpi(upiInput.value), 'manual'));
+    document.getElementById('continuePayment').addEventListener('click', () => { verifyState.classList.remove('visible'); handoffState.classList.add('visible'); });
+    document.getElementById('editPayment').addEventListener('click', () => { modal.classList.remove('open'); upiInput.focus(); });
     modalCopyUpiButton.addEventListener('click', () => currentDetails && copyText(currentDetails.id, modalCopyUpiButton, 'Copied'));
     document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
@@ -323,16 +369,16 @@
         qrScanner = new Html5Qrcode('reader');
         await qrScanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 220, height: 220 } }, decodedText => {
           const details = parseUpi(decodedText);
-          if (!details) { showAlert('That QR is not a UPI payment QR.'); return; }
+          if (!details) { showAlert("This doesn't look like a supported UPI QR. Make sure the QR is fully visible."); return; }
           qrScanner.stop().catch(() => {});
           reader.hidden = true;
           placeholder.hidden = false;
-          setPayment(details);
+          setPayment(details, 'qr');
         }, () => {});
       } catch (error) {
         reader.hidden = true;
         placeholder.hidden = false;
-        showAlert('Camera could not start. Check permission, or enter the UPI ID manually.');
+        showAlert('Camera access is required to scan a QR. Check permission, or enter the UPI ID manually.');
       }
     });
   </script>

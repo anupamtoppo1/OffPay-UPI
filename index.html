@@ -68,7 +68,7 @@
     .button-quiet { color: var(--violet); background: white; border: 1px solid #d9c9f2; border-radius: 12px; }
     .button { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
     .button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(95, 37, 159, .16); }
-    .button:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .button:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
     .divider { display: flex; align-items: center; gap: 10px; margin: 21px 0; color: var(--muted); font: 500 .7rem "DM Mono", monospace; text-transform: uppercase; }
     .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--line); }
     .manual-row { display: grid; grid-template-columns: 1fr 112px; gap: 8px; }
@@ -84,6 +84,11 @@
     .detail-line { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; }
     .detail-line span:first-child { color: var(--muted); }
     .detail-line span:last-child { max-width: 65%; overflow-wrap: anywhere; text-align: right; font-family: "DM Mono", monospace; }
+    .copy-row { display: flex; align-items: center; gap: 9px; margin-top: 11px; }
+    .copy-row button { min-height: 36px; padding: 0 12px; color: var(--violet); background: white; border: 1px solid #d9c9f2; border-radius: 9px; font-size: .75rem; }
+    .copy-status { color: var(--violet-dark); font-size: .72rem; }
+    .network-warning { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 13px 15px; color: #753c08; background: #fff4dc; border: 1px solid #f2d79b; border-radius: 12px; font-size: .76rem; }
+    .network-warning strong { display: block; margin-bottom: 2px; color: #5e3005; }
     .instructions { padding: 76px 0 88px; border-top: 1px solid var(--line); background: white; }
     .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 35px; }
     h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.7rem); line-height: 1; letter-spacing: -.06em; }
@@ -103,14 +108,19 @@
     .reason p { margin: 0; color: var(--muted); font-size: .82rem; }
     footer { padding: 25px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .74rem; }
     .footer-row { display: flex; justify-content: space-between; gap: 20px; }
-    .modal { display: none; position: fixed; inset: 0; z-index: 5; place-items: center; padding: 20px; background: rgba(24, 34, 29, .65); }
+    .modal { display: none; position: fixed; inset: 0; z-index: 5; place-items: center; padding: 18px; background: rgba(23, 18, 46, .72); backdrop-filter: blur(7px); }
     .modal.open { display: grid; }
-    .modal-card { width: min(430px, 100%); padding: 28px; background: var(--panel); border-radius: 22px; box-shadow: var(--shadow); animation: float-in .35s both cubic-bezier(.2,.7,.2,1); }
-    .modal-card h2 { font-size: 2rem; margin-bottom: 13px; }
+    .modal-card { width: min(620px, 100%); max-height: min(720px, 94vh); overflow-y: auto; padding: clamp(26px, 5vw, 48px); background: var(--panel); border-radius: 28px; box-shadow: 0 30px 90px rgba(23, 18, 46, .28); animation: float-in .35s both cubic-bezier(.2,.7,.2,1); }
+    .modal-card h2 { max-width: 500px; font-size: clamp(2.2rem, 6vw, 4rem); line-height: .96; margin: 12px 0 16px; }
     .modal-card p { color: var(--muted); font-size: .88rem; }
     .modal-card ol { padding-left: 20px; color: var(--ink); font-size: .9rem; }
     .modal-card li { padding: 5px 0; }
-    .modal-actions { display: flex; gap: 8px; margin-top: 25px; }
+    .dial-preview { margin: 24px 0 8px; padding: 17px; background: #f5efff; border: 1px solid #ded0f5; border-radius: 15px; }
+    .dial-preview-label { display: block; margin-bottom: 8px; color: var(--violet); font: 500 .68rem "DM Mono", monospace; text-transform: uppercase; }
+    .dial-string { display: block; overflow-wrap: anywhere; color: var(--violet-dark); font: 500 clamp(.78rem, 2vw, .95rem) "DM Mono", monospace; line-height: 1.6; }
+    .modal-note { margin: 12px 0 0; color: var(--muted); font-size: .76rem; }
+    .modal-actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 25px; }
+    .modal-actions .button { min-height: 54px; }
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     @keyframes float-in { from { opacity: 0; transform: translateY(24px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -123,6 +133,8 @@
       .hero { grid-template-columns: 1fr; gap: 40px; padding: 55px 0 65px; }
       h1 { font-size: clamp(3.4rem, 17vw, 5.5rem); }
       .payment-card { padding: 20px; }
+      .manual-row, .amount-row { grid-template-columns: 1fr; }
+      .manual-row .button, .amount-row .button { width: 100%; }
       .section-heading, .why { grid-template-columns: 1fr; display: grid; gap: 20px; }
       .steps, .reasons { grid-template-columns: 1fr; }
       .step { min-height: auto; }
@@ -130,6 +142,7 @@
       .why { padding: 60px 0; gap: 38px; }
       .footer-row { display: block; }
       .footer-row span { display: block; margin-top: 8px; }
+      .modal-actions { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -147,7 +160,7 @@
         <span class="eyebrow">No data. No app. Just pay.</span>
         <h1>UPI,<br>off the grid.</h1>
         <p class="hero-copy">Prepare a payment from a QR code or UPI ID, then finish it through your phone's secure <strong>*99# USSD dialer</strong>. Your payment details stay in this browser.</p>
-        <div class="trust-line"><span>Local-first</span><span>USSD ready</span><span>Built for low signal</span></div>
+        <div class="trust-line"><span>first offline upi</span><span>USSD ready</span><span>Built for low signal</span></div>
       </div>
 
       <section class="payment-card" aria-labelledby="payment-title">
@@ -166,12 +179,13 @@
           <button class="button button-quiet" id="useUpiButton" type="button">Use ID</button>
         </div>
         <div class="amount-row" id="amountRow">
-          <input id="amountInput" type="number" min="1" max="5000" step="0.01" placeholder="Amount (optional)" aria-label="Payment amount in rupees">
+          <input id="amountInput" type="number" min="1" max="5000" step="0.01" placeholder="Amount in ₹" aria-label="Payment amount in rupees">
           <button class="button button-lime" id="payButton" type="button">Pay securely</button>
         </div>
         <p class="helper">We never ask for your UPI PIN. Enter it only in your bank's dialer or app.</p>
         <div class="alert" id="alert" role="alert"></div>
         <div class="payment-details" id="paymentDetails" aria-live="polite"></div>
+        <div class="network-warning"><span aria-hidden="true">⚠</span><div><strong>Jio users: *99# may not work</strong>NUUP support depends on your mobile operator. Use a supported GSM network or your bank's official payment app.</div></div>
       </section>
     </section>
 
@@ -202,10 +216,12 @@
   <div class="modal" id="instructionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <span class="eyebrow">Next step</span>
-      <h2 id="modalTitle">Finish in your dialer</h2>
-      <p>OffPay has prepared the payment. Your bank will now handle authorization.</p>
+      <h2 id="modalTitle">Your payment is ready.</h2>
+      <p>We copied the UPI ID to your clipboard. Use the direct USSD shortcut below, then verify every detail before entering your UPI PIN.</p>
+      <div class="dial-preview"><span class="dial-preview-label">Direct *99# shortcut</span><code class="dial-string" id="dialString">*99*1*3*merchant@bank*100*1#</code><button class="button button-quiet" id="copyDialButton" type="button">Copy dial string</button></div>
       <ol><li>Tap <strong>Pay</strong> in the dialer.</li><li>Choose <strong>Send Money</strong> and enter the merchant details shown.</li><li>Review everything, then enter your UPI PIN.</li></ol>
-      <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99%23">Open *99# dialer</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
+      <p class="modal-note">The final # is encoded for the phone dialer. This feature needs cellular signal and may not work on Jio.</p>
+      <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99%231%233">Pay by USSD</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
     </div>
   </div>
 
@@ -218,7 +234,32 @@
     const modal = document.getElementById('instructionModal');
     const reader = document.getElementById('reader');
     const placeholder = document.getElementById('scanPlaceholder');
+    const dialString = document.getElementById('dialString');
+    const dialLink = document.getElementById('dialLink');
+    const copyDialButton = document.getElementById('copyDialButton');
     let qrScanner;
+    let currentDetails;
+
+    async function copyText(value, statusElement, successText) {
+      try {
+        await navigator.clipboard.writeText(value);
+        if (statusElement) statusElement.textContent = successText;
+      } catch (error) {
+        const fallback = document.createElement('textarea');
+        fallback.value = value;
+        fallback.style.position = 'fixed';
+        fallback.style.opacity = '0';
+        document.body.appendChild(fallback);
+        fallback.select();
+        document.execCommand('copy');
+        fallback.remove();
+        if (statusElement) statusElement.textContent = successText;
+      }
+    }
+
+    function makeDialString(details, amount) {
+      return '*99*1*3*' + details.id + '*' + amount + '*1#';
+    }
 
     const revealItems = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
@@ -258,11 +299,14 @@
     function setPayment(details) {
       if (!details || !details.id) { showAlert('Enter a valid UPI ID, such as merchant@bank.'); return; }
       clearAlert();
+      currentDetails = details;
       upiInput.value = details.id;
       if (details.amount) amountInput.value = details.amount;
       amountRow.classList.add('visible');
-      paymentDetails.innerHTML = '<div class="detail-line"><span>Paying to</span><span>' + escapeHtml(details.name || 'Merchant') + '</span></div><div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div>';
+      paymentDetails.innerHTML = '<div class="detail-line"><span>Paying to</span><span>' + escapeHtml(details.name || 'Merchant') + '</span></div><div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div><div class="copy-row"><button id="copyUpiButton" type="button">Copy UPI ID</button><span class="copy-status" id="copyStatus">Copying...</span></div>';
       paymentDetails.classList.add('visible');
+      copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied');
+      document.getElementById('copyUpiButton').addEventListener('click', () => copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied'));
     }
 
     function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
@@ -272,11 +316,17 @@
       const details = parseUpi(upiInput.value);
       const amount = Number(amountInput.value);
       if (!details) { showAlert('Please check the UPI ID before continuing.'); return; }
-      if (amountInput.value && (!Number.isFinite(amount) || amount < 1 || amount > 5000)) { showAlert('Enter an amount between ₹1 and ₹5,000.'); return; }
+      if (!amountInput.value || !Number.isFinite(amount) || amount < 1 || amount > 5000) { showAlert('Enter an amount between ₹1 and ₹5,000 to use the direct USSD shortcut.'); return; }
       clearAlert();
-      document.getElementById('modalTitle').textContent = amountInput.value ? 'Pay ₹' + amount.toFixed(2) + ' securely' : 'Finish in your dialer';
+      currentDetails = details;
+      const shortcut = makeDialString(details, amount.toFixed(2));
+      document.getElementById('modalTitle').textContent = 'Pay ₹' + amount.toFixed(2) + ' securely';
+      dialString.textContent = shortcut;
+      dialLink.href = 'tel:' + shortcut.replace('#', '%23');
+      copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied');
       modal.classList.add('open');
     });
+    copyDialButton.addEventListener('click', () => copyText(dialString.textContent, copyDialButton, 'Copied'));
     document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
 

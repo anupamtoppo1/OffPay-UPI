@@ -74,8 +74,6 @@
     .manual-row { display: grid; grid-template-columns: 1fr 112px; gap: 8px; }
     input { min-width: 0; width: 100%; height: 46px; padding: 0 13px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: white; font: 500 .9rem "DM Mono", monospace; }
     input::placeholder { color: #9b9a91; }
-    .amount-row { display: none; grid-template-columns: 1fr 112px; gap: 8px; margin-top: 8px; }
-    .amount-row.visible { display: grid; }
     .helper { margin: 12px 0 0; color: var(--muted); font-size: .73rem; }
     .alert { display: none; margin-top: 14px; padding: 11px 13px; background: #fff0e9; color: #943d23; font-size: .78rem; }
     .alert.visible { display: block; }
@@ -112,6 +110,12 @@
     .modal.open { display: grid; }
     .modal-card { width: min(620px, 100%); max-height: min(720px, 94vh); overflow-y: auto; padding: clamp(26px, 5vw, 48px); background: var(--panel); border-radius: 28px; box-shadow: 0 30px 90px rgba(23, 18, 46, .28); animation: float-in .35s both cubic-bezier(.2,.7,.2,1); }
     .modal-card h2 { max-width: 500px; font-size: clamp(2.2rem, 6vw, 4rem); line-height: .96; margin: 12px 0 16px; }
+    .bank-choice { display: flex; align-items: center; gap: 13px; margin: 23px 0 18px; padding: 14px; border: 1px solid #d9c9f2; border-radius: 15px; background: #faf8ff; }
+    .bank-logo { display: grid; place-items: center; flex: 0 0 43px; width: 43px; height: 43px; border-radius: 12px; color: white; background: var(--violet); font: 500 1rem "DM Mono", monospace; }
+    .bank-choice strong, .bank-choice span { display: block; }
+    .bank-choice strong { font-size: .88rem; }
+    .bank-choice span { color: var(--muted); font: 500 .7rem "DM Mono", monospace; }
+    .bank-check { margin-left: auto; color: #3e9b68; font-size: 1.2rem; }
     .modal-card p { color: var(--muted); font-size: .88rem; }
     .modal-card ol { padding-left: 20px; color: var(--ink); font-size: .9rem; }
     .modal-card li { padding: 5px 0; }
@@ -133,8 +137,8 @@
       .hero { grid-template-columns: 1fr; gap: 40px; padding: 55px 0 65px; }
       h1 { font-size: clamp(3.4rem, 17vw, 5.5rem); }
       .payment-card { padding: 20px; }
-      .manual-row, .amount-row { grid-template-columns: 1fr; }
-      .manual-row .button, .amount-row .button { width: 100%; }
+      .manual-row { grid-template-columns: 1fr; }
+      .manual-row .button { width: 100%; }
       .section-heading, .why { grid-template-columns: 1fr; display: grid; gap: 20px; }
       .steps, .reasons { grid-template-columns: 1fr; }
       .step { min-height: auto; }
@@ -178,11 +182,7 @@
           <input id="upiInput" type="text" placeholder="merchant@bank" autocomplete="off" spellcheck="false" aria-label="Merchant UPI ID">
           <button class="button button-quiet" id="useUpiButton" type="button">Use ID</button>
         </div>
-        <div class="amount-row" id="amountRow">
-          <input id="amountInput" type="number" min="1" max="5000" step="0.01" placeholder="Amount in ₹" aria-label="Payment amount in rupees">
-          <button class="button button-lime" id="payButton" type="button">Pay securely</button>
-        </div>
-        <p class="helper">We never ask for your UPI PIN. Enter it only in your bank's dialer or app.</p>
+        <p class="helper">We never ask for your UPI PIN, amount, or remark. Enter them only in your bank's secure dialer.</p>
         <div class="alert" id="alert" role="alert"></div>
         <div class="payment-details" id="paymentDetails" aria-live="polite"></div>
         <div class="network-warning"><span aria-hidden="true">⚠</span><div><strong>Jio users: *99# may not work</strong>NUUP support depends on your mobile operator. Use a supported GSM network or your bank's official payment app.</div></div>
@@ -216,27 +216,26 @@
   <div class="modal" id="instructionModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-card">
       <span class="eyebrow">Next step</span>
-      <h2 id="modalTitle">Your payment is ready.</h2>
-      <p>We copied the UPI ID to your clipboard. Use the direct USSD shortcut below, then verify every detail before entering your UPI PIN.</p>
-      <div class="dial-preview"><span class="dial-preview-label">Direct *99# shortcut</span><code class="dial-string" id="dialString">*99*1*3*merchant@bank*100*1#</code><button class="button button-quiet" id="copyDialButton" type="button">Copy dial string</button></div>
-      <ol><li>Tap <strong>Pay</strong> in the dialer.</li><li>Choose <strong>Send Money</strong> and enter the merchant details shown.</li><li>Review everything, then enter your UPI PIN.</li></ol>
-      <p class="modal-note">The final # is encoded for the phone dialer. This feature needs cellular signal and may not work on Jio.</p>
-      <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99%231%233">Pay by USSD</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
+      <h2 id="modalTitle">Choose your bank to pay.</h2>
+      <p>We found the payment address below. Copy it, then use your bank's secure USSD flow to enter the UPI ID and amount yourself.</p>
+      <div class="bank-choice"><span class="bank-logo">UPI</span><div><strong>Your bank's secure dialer</strong><span>*99# works without mobile data</span></div><span class="bank-check" aria-hidden="true">✓</span></div>
+      <div class="dial-preview"><span class="dial-preview-label">UPI ID</span><code class="dial-string" id="upiPreview">merchant@bank</code><button class="button button-quiet" id="modalCopyUpiButton" type="button">Copy UPI ID</button></div>
+      <ol><li>Tap <strong>Pay securely</strong> to open your phone dialer.</li><li>Choose <strong>Send Money</strong>, then paste the UPI ID and enter the amount.</li><li>Review the details and enter your UPI PIN only in the bank flow.</li></ol>
+      <p class="modal-note">The shortcut is <strong>*99*1*3#</strong>. It needs cellular signal and may not work on Jio.</p>
+      <div class="modal-actions"><a class="button button-lime" id="dialLink" href="tel:*99%231%233">Pay securely</a><button class="button button-quiet" id="closeModal" type="button">Go back</button></div>
     </div>
   </div>
 
   <script>
     const upiInput = document.getElementById('upiInput');
-    const amountInput = document.getElementById('amountInput');
-    const amountRow = document.getElementById('amountRow');
     const paymentDetails = document.getElementById('paymentDetails');
     const alertBox = document.getElementById('alert');
     const modal = document.getElementById('instructionModal');
     const reader = document.getElementById('reader');
     const placeholder = document.getElementById('scanPlaceholder');
-    const dialString = document.getElementById('dialString');
+    const upiPreview = document.getElementById('upiPreview');
     const dialLink = document.getElementById('dialLink');
-    const copyDialButton = document.getElementById('copyDialButton');
+    const modalCopyUpiButton = document.getElementById('modalCopyUpiButton');
     let qrScanner;
     let currentDetails;
 
@@ -257,8 +256,11 @@
       }
     }
 
-    function makeDialString(details, amount) {
-      return '*99*1*3*' + details.id + '*' + amount + '*1#';
+    function openPaymentModal(details) {
+      currentDetails = details;
+      upiPreview.textContent = details.id;
+      dialLink.href = 'tel:*99%231%233';
+      modal.classList.add('open');
     }
 
     const revealItems = document.querySelectorAll('.reveal');
@@ -301,32 +303,17 @@
       clearAlert();
       currentDetails = details;
       upiInput.value = details.id;
-      if (details.amount) amountInput.value = details.amount;
-      amountRow.classList.add('visible');
       paymentDetails.innerHTML = '<div class="detail-line"><span>Paying to</span><span>' + escapeHtml(details.name || 'Merchant') + '</span></div><div class="detail-line"><span>UPI ID</span><span>' + escapeHtml(details.id) + '</span></div><div class="copy-row"><button id="copyUpiButton" type="button">Copy UPI ID</button><span class="copy-status" id="copyStatus">Copying...</span></div>';
       paymentDetails.classList.add('visible');
       copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied');
       document.getElementById('copyUpiButton').addEventListener('click', () => copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied'));
+      openPaymentModal(details);
     }
 
     function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
 
     document.getElementById('useUpiButton').addEventListener('click', () => setPayment(parseUpi(upiInput.value)));
-    document.getElementById('payButton').addEventListener('click', () => {
-      const details = parseUpi(upiInput.value);
-      const amount = Number(amountInput.value);
-      if (!details) { showAlert('Please check the UPI ID before continuing.'); return; }
-      if (!amountInput.value || !Number.isFinite(amount) || amount < 1 || amount > 5000) { showAlert('Enter an amount between ₹1 and ₹5,000 to use the direct USSD shortcut.'); return; }
-      clearAlert();
-      currentDetails = details;
-      const shortcut = makeDialString(details, amount.toFixed(2));
-      document.getElementById('modalTitle').textContent = 'Pay ₹' + amount.toFixed(2) + ' securely';
-      dialString.textContent = shortcut;
-      dialLink.href = 'tel:' + shortcut.replace('#', '%23');
-      copyText(details.id, document.getElementById('copyStatus'), 'UPI ID copied');
-      modal.classList.add('open');
-    });
-    copyDialButton.addEventListener('click', () => copyText(dialString.textContent, copyDialButton, 'Copied'));
+    modalCopyUpiButton.addEventListener('click', () => currentDetails && copyText(currentDetails.id, modalCopyUpiButton, 'Copied'));
     document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', event => { if (event.target === modal) modal.classList.remove('open'); });
 

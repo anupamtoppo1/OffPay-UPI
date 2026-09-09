@@ -4,8 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f3eee6">
-  <meta name="description" content="Scan a UPI QR, extract the UPI ID, and continue payment through a supported USSD or bank flow without mobile data.">
+  <meta name="description" content="Scan a UPI QR, verify the payment details, and continue through a supported UPI/USSD flow without mobile data.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="OffPay UPI">
+  <meta property="og:title" content="OffPay UPI — Pay UPI Without Mobile Data">
+  <meta property="og:description" content="Scan a UPI QR, verify the payment details, and continue through a supported UPI/USSD flow without mobile data.">
+  <meta property="og:type" content="website">
   <title>OffPay UPI — Pay UPI Without Mobile Data</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -89,6 +98,41 @@
     .copy-status { color: var(--violet-dark); font-size: .72rem; }
     .network-warning { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 13px 15px; color: #753c08; background: #fff4dc; border: 1px solid #f2d79b; border-radius: 12px; font-size: .8rem; }
     .network-warning strong { display: block; margin-bottom: 2px; color: #5e3005; }
+    .utility-menu { margin: 18px auto 0; max-width: 760px; background: rgba(255,255,255,.75); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+    .utility-item { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.9); color: var(--ink); }
+    .utility-item:last-child { border-bottom: 0; }
+    .utility-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: #eef3ff; color: var(--violet); font-size: 1.1rem; }
+    .utility-copy strong { display: block; font-size: .98rem; }
+    .utility-copy span { color: var(--muted); font-size: .8rem; }
+    .tiny-cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 12px; background: rgba(95, 37, 159, 0.08); color: var(--violet-dark); min-height: 40px; padding: 0 14px; font-size: .8rem; }
+    .workflow-card { max-width: 760px; margin: 26px auto 0; background: rgba(255,255,255,.8); border: 1px solid var(--line); border-radius: 20px; padding: 22px; }
+    .workflow-card h3 { margin: 0 0 14px; font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -.05em; }
+    .workflow-card p { margin: 0; color: var(--muted); }
+    .workflow-grid { display: grid; grid-template-columns: repeat(2, minmax(150px, 1fr)); gap: 14px; margin-top: 18px; }
+    .mini-card { display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 120px; padding: 18px 12px; background: #f5f2ff; border: 1px solid #e3d8fb; border-radius: 18px; }
+    .mini-icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: white; color: var(--violet); font-size: 1.2rem; }
+    .mini-card strong { font-size: .95rem; }
+    .mini-card span { color: var(--muted); font-size: .76rem; text-align: center; }
+    .faq-panel { max-width: 760px; margin: 26px auto 0; background: rgba(255,255,255,.8); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item:last-child { border-bottom: 0; }
+    .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: transparent; border: 0; padding: 16px 18px; text-align: left; color: var(--ink); font: 700 .95rem Manrope, sans-serif; }
+    .faq-answer { display: none; padding: 0 18px 16px; color: var(--muted); font-size: .86rem; }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-question::after { content: "+"; font-size: 1.3rem; color: var(--violet); }
+    .faq-item.open .faq-question::after { content: "−"; }
+    .panel-shell { max-width: 760px; margin: 20px auto 0; }
+    .network-indicator { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(95, 37, 159, 0.08); color: var(--violet-dark); font: 600 .72rem "DM Mono", monospace; }
+    .network-indicator::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #2bb673; box-shadow: 0 0 0 3px rgba(43, 182, 115, .12); }
+    .network-indicator.offline { color: #7c5b15; background: rgba(255, 172, 29, 0.12); }
+    .network-indicator.offline::before { background: #ffb020; box-shadow: 0 0 0 3px rgba(255, 176, 32, .14); }
+    .install-banner { display: none; max-width: 760px; margin: 24px auto 0; padding: 14px 18px; border-radius: 18px; background: linear-gradient(135deg, #f4f1ff, #ebf1ff); border: 1px solid #d6d3ff; color: var(--ink); }
+    .install-banner.visible { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .install-banner strong { display: block; font-size: .98rem; }
+    .install-banner span { color: var(--muted); font-size: .8rem; }
+    .install-banner button { min-height: 42px; padding: 0 16px; border-radius: 12px; background: var(--violet); color: white; }
+    .offline-banner { display: none; max-width: 760px; margin: 18px auto 0; padding: 12px 16px; border-radius: 14px; background: rgba(255, 192, 66, 0.12); border: 1px solid rgba(191, 138, 26, 0.24); color: #5c420a; font-size: .82rem; }
+    .offline-banner.visible { display: block; }
     .instructions { padding: 76px 0 88px; border-top: 1px solid var(--line); background: white; }
     .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 35px; }
     h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.7rem); line-height: 1; letter-spacing: -.06em; }
@@ -162,9 +206,22 @@
   <header>
     <div class="shell nav">
       <a class="brand" href="#top" aria-label="OffPay UPI home"><span class="brand-mark">↗</span><span>OffPay<small>Pay without mobile data</small></span></a>
-      <nav class="nav-links" aria-label="Main navigation"><a href="#how">How it works</a><a href="#why">Why OffPay</a></nav>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span id="networkState" class="network-indicator">● Online</span>
+        <nav class="nav-links" aria-label="Main navigation"><a href="#how">How it works</a><a href="#why">Why OffPay</a></nav>
+      </div>
     </div>
   </header>
+
+  <div id="installBanner" class="install-banner" hidden>
+    <div>
+      <strong>Keep OffPay ready</strong>
+      <span>Install it on your home screen for faster access.</span>
+    </div>
+    <button id="installButton" type="button">Install App</button>
+  </div>
+
+  <div id="offlineBanner" class="offline-banner">OffPay is ready offline, but the actual payment flow may still require cellular signal and compatible bank/operator support.</div>
 
   <main id="top">
     <section class="shell hero">
@@ -191,11 +248,66 @@
           <input id="upiInput" type="text" placeholder="merchant@bank" autocomplete="off" spellcheck="false" aria-label="Merchant UPI ID">
           <button class="button button-quiet" id="useUpiButton" type="button">Use ID</button>
         </div>
+        <div class="manual-row" style="margin-top: 8px;">
+          <button class="button button-dark" id="scanButtonSecondary" type="button">📷 Scan QR</button>
+          <button class="button button-quiet" id="manualCopyButton" type="button" aria-label="Copy current UPI ID">Copy</button>
+        </div>
         <p class="helper">Format check only. We never ask for your UPI PIN. Enter your amount and PIN only in your bank's secure payment flow. The UPI ID is copied automatically when the payment is prepared.</p>
         <div class="alert" id="alert" role="alert"></div>
         <div class="payment-details" id="paymentDetails" aria-live="polite"></div>
         <div class="network-warning"><span aria-hidden="true">⚠</span><div><strong>Important: no mobile data does not mean no network.</strong><br><code>*99#</code> availability depends on your bank and mobile operator. Some Jio configurations may not support USSD.</div></div>
       </section>
+    </section>
+
+    <section class="shell panel-shell" aria-label="Quick mobile actions">
+      <div class="utility-menu" id="utilityMenu">
+        <button class="utility-item" id="bankSetupButton" type="button">
+          <span class="utility-icon">🏦</span>
+          <span class="utility-copy"><strong>Set up your bank</strong><span>Link it to *99#, one time</span></span>
+        </button>
+        <button class="utility-item" id="howToUseButton" type="button">
+          <span class="utility-icon">⛶</span>
+          <span class="utility-copy"><strong>How to use</strong><span>Scan a code, then pay</span></span>
+        </button>
+        <button class="utility-item" id="installActionButton" type="button">
+          <span class="utility-icon">↓</span>
+          <span class="utility-copy"><strong>Install</strong><span>Works with no data</span></span>
+        </button>
+        <button class="utility-item" id="faqButton" type="button">
+          <span class="utility-icon">📖</span>
+          <span class="utility-copy"><strong>Help &amp; FAQ</strong><span>Quick answers for setup and use</span></span>
+        </button>
+      </div>
+
+      <div class="workflow-card">
+        <h3>Offline UPI Payments</h3>
+        <p>Scan a QR code, pay with <code>*99#</code>. Cellular signal is still required for the actual payment flow.</p>
+        <div class="workflow-grid">
+          <article class="mini-card"><span class="mini-icon">📷</span><strong>Scan QR</strong><span>Detect and copy UPI ID</span></article>
+          <article class="mini-card"><span class="mini-icon">📋</span><strong>Copy</strong><span>Prepare UPI ID for payment</span></article>
+          <article class="mini-card"><span class="mini-icon">☎</span><strong>Send to UPI ID</strong><span><code>*99*1*3#</code></span></article>
+          <article class="mini-card"><span class="mini-icon">💳</span><strong>Check Balance</strong><span><code>*99*3#</code></span></article>
+        </div>
+      </div>
+
+      <div class="faq-panel" aria-label="FAQ panel">
+        <div class="faq-item open">
+          <button class="faq-question" type="button">How does OffPay work?</button>
+          <div class="faq-answer">OffPay reads the merchant UPI QR, validates the destination, and prepares the payment information for your supported bank or USSD flow. It never asks for your UPI PIN.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">Do I need mobile data?</button>
+          <div class="faq-answer">The app shell can work offline after installation, but the payment flow still requires a cellular signal and compatible bank/operator support, such as USSD.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">Where is my UPI PIN entered?</button>
+          <div class="faq-answer">Only in your bank's payment flow. OffPay never asks for your UPI PIN, OTP, CVV, or bank password.</div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" type="button">Why isn't *99# working?</button>
+          <div class="faq-answer">USSD support depends on your mobile operator and bank configuration. Some Jio and other network setups may not support the required service.</div>
+        </div>
+      </div>
     </section>
 
     <section class="instructions reveal" id="how">
@@ -247,6 +359,37 @@
     </div>
   </div>
 
+  <div class="modal" id="walkthroughModal" role="dialog" aria-modal="true" aria-label="How to use walkthrough">
+    <div class="modal-card">
+      <span class="eyebrow">How to use</span>
+      <h2 id="walkthroughTitle">Scan the QR</h2>
+      <p id="walkthroughText">Open the scanner and point it at the merchant UPI QR code.</p>
+      <div class="dial-preview"><span class="dial-preview-label">Step</span><code class="dial-string" id="walkthroughStepLabel">01 / Scan</code></div>
+      <div class="modal-actions">
+        <button class="button button-quiet" id="walkthroughBack" type="button">Back</button>
+        <button class="button button-lime" id="walkthroughNext" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="bankSetupModal" role="dialog" aria-modal="true" aria-label="Bank setup instructions">
+    <div class="modal-card">
+      <span class="eyebrow">Set up your bank</span>
+      <h2>Set up UPI for offline payments</h2>
+      <p>Before using USSD UPI payments, your bank account may need to be registered with the supported *99# service.</p>
+      <ol>
+        <li>Open <strong>*99#</strong> on your mobile dialer.</li>
+        <li>Follow your bank's registration and linking instructions.</li>
+        <li>Complete the required mobile-number or account linking.</li>
+        <li>Return to OffPay and continue.</li>
+      </ol>
+      <div class="modal-actions">
+        <a class="button button-lime" id="bankSetupDialLink" href="tel:*99#">Open *99#</a>
+        <button class="button button-quiet" id="closeBankSetup" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const upiInput = document.getElementById('upiInput');
     const paymentDetails = document.getElementById('paymentDetails');
@@ -265,8 +408,28 @@
     const upiPreview = document.getElementById('upiPreview');
     const dialLink = document.getElementById('dialLink');
     const modalCopyUpiButton = document.getElementById('modalCopyUpiButton');
+    const walkthroughModal = document.getElementById('walkthroughModal');
+    const bankSetupModal = document.getElementById('bankSetupModal');
+    const walkthroughTitle = document.getElementById('walkthroughTitle');
+    const walkthroughText = document.getElementById('walkthroughText');
+    const walkthroughStepLabel = document.getElementById('walkthroughStepLabel');
+    const walkthroughBack = document.getElementById('walkthroughBack');
+    const walkthroughNext = document.getElementById('walkthroughNext');
+    const bankSetupButton = document.getElementById('bankSetupButton');
+    const howToUseButton = document.getElementById('howToUseButton');
+    const faqButton = document.getElementById('faqButton');
+    const installActionButton = document.getElementById('installActionButton');
+    const faqItems = document.querySelectorAll('.faq-item');
+    const manualCopyButton = document.getElementById('manualCopyButton');
     let qrScanner;
     let currentDetails;
+    let walkthroughIndex = 0;
+    const walkthroughSteps = [
+      { title: 'Scan the QR', text: 'Open the scanner and point it at the merchant UPI QR code.', label: '01 / Scan' },
+      { title: 'Check the details', text: 'Review the UPI ID and payment amount before continuing.', label: '02 / Verify' },
+      { title: 'Copy or prepare the UPI ID', text: 'Use the copied UPI ID in the supported bank or USSD flow.', label: '03 / Prepare' },
+      { title: 'Complete with your bank', text: 'Finish authorization through the bank or payment flow using your UPI PIN only inside the secure bank flow.', label: '04 / Pay' }
+    ];
 
     async function copyText(value, statusElement, successText) {
       try {
@@ -356,7 +519,126 @@
 
     function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character])); }
 
+    function openDialer(code) {
+      const telUrl = 'tel:' + encodeURIComponent(code);
+      const fallbackText = 'Open the phone dialer and dial: ' + code;
+      if (window.location && window.location.href) {
+        window.location.href = telUrl;
+      }
+      showAlert('Dialer handoff attempted. If it did not open, dial ' + code + ' manually.');
+      console.info(fallbackText);
+    }
+
+    function openBankSetup() {
+      bankSetupModal.classList.add('open');
+      localStorage.setItem('offpay-bank-setup-completed', 'true');
+    }
+
+    function openHowToUse() {
+      walkthroughIndex = 0;
+      renderWalkthrough();
+      walkthroughModal.classList.add('open');
+    }
+
+    function renderWalkthrough() {
+      const step = walkthroughSteps[walkthroughIndex];
+      walkthroughTitle.textContent = step.title;
+      walkthroughText.textContent = step.text;
+      walkthroughStepLabel.textContent = step.label;
+      walkthroughBack.disabled = walkthroughIndex === 0;
+      walkthroughBack.style.opacity = walkthroughIndex === 0 ? '0.5' : '1';
+      walkthroughNext.textContent = walkthroughIndex === walkthroughSteps.length - 1 ? 'Start scanning' : 'Next';
+    }
+
+    function toggleFaq(item) {
+      item.classList.toggle('open');
+    }
+
+    faqItems.forEach(item => {
+      item.querySelector('.faq-question').addEventListener('click', () => toggleFaq(item));
+    });
+
+    bankSetupButton.addEventListener('click', openBankSetup);
+    howToUseButton.addEventListener('click', openHowToUse);
+    faqButton.addEventListener('click', () => {
+      document.getElementById('how').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const faqPanel = document.querySelector('.faq-panel');
+      if (faqPanel) faqPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    installActionButton.addEventListener('click', triggerInstallPrompt);
+
+    walkthroughBack.addEventListener('click', () => {
+      if (walkthroughIndex > 0) {
+        walkthroughIndex -= 1;
+        renderWalkthrough();
+      }
+    });
+    walkthroughNext.addEventListener('click', () => {
+      if (walkthroughIndex < walkthroughSteps.length - 1) {
+        walkthroughIndex += 1;
+        renderWalkthrough();
+        return;
+      }
+      walkthroughModal.classList.remove('open');
+      document.getElementById('scanButton').click();
+    });
+    bankSetupModal.addEventListener('click', event => { if (event.target === bankSetupModal) bankSetupModal.classList.remove('open'); });
+    document.getElementById('closeBankSetup').addEventListener('click', () => bankSetupModal.classList.remove('open'));
+    walkthroughModal.addEventListener('click', event => { if (event.target === walkthroughModal) walkthroughModal.classList.remove('open'); });
+    document.getElementById('bankSetupDialLink').addEventListener('click', () => openDialer('*99#'));
+
+    const installBanner = document.getElementById('installBanner');
+    const installButton = document.getElementById('installButton');
+    const networkState = document.getElementById('networkState');
+    const offlineBanner = document.getElementById('offlineBanner');
+    let deferredPrompt = null;
+
+    function updateNetworkStatus() {
+      const isOnline = navigator.onLine;
+      networkState.textContent = isOnline ? '● Online' : '● Offline mode';
+      networkState.classList.toggle('offline', !isOnline);
+      offlineBanner.classList.toggle('visible', !isOnline);
+    }
+
+    function triggerInstallPrompt() {
+      if (!deferredPrompt) {
+        showAlert('Install support is not available in this browser. You can still use the app in your browser or add it from the browser menu.');
+        return;
+      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => { deferredPrompt = null; installBanner.classList.remove('visible'); }).catch(() => {});
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installBanner.hidden = false;
+      installBanner.classList.add('visible');
+    });
+    window.addEventListener('appinstalled', () => {
+      installBanner.classList.remove('visible');
+      showAlert('OffPay installed successfully.');
+    });
+
+    installButton.addEventListener('click', triggerInstallPrompt);
+    updateNetworkStatus();
+
     document.getElementById('useUpiButton').addEventListener('click', () => setPayment(parseUpi(upiInput.value), 'manual'));
+    manualCopyButton.addEventListener('click', () => {
+      const currentValue = upiInput.value.trim();
+      if (!currentValue) {
+        showAlert('Enter a UPI ID first to copy it.');
+        return;
+      }
+      copyText(currentValue, manualCopyButton, 'UPI ID copied');
+    });
+    document.getElementById('scanButtonSecondary').addEventListener('click', () => document.getElementById('scanButton').click());
     document.getElementById('continuePayment').addEventListener('click', () => { verifyState.classList.remove('visible'); handoffState.classList.add('visible'); });
     document.getElementById('editPayment').addEventListener('click', () => { modal.classList.remove('open'); upiInput.focus(); });
     modalCopyUpiButton.addEventListener('click', () => currentDetails && copyText(currentDetails.id, modalCopyUpiButton, 'Copied'));

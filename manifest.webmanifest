@@ -1,0 +1,19 @@
+{
+  "name": "OffPay UPI",
+  "short_name": "OffPay",
+  "description": "Scan a UPI QR, verify the payment details, and continue through a supported UPI/USSD flow without mobile data.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f6fc",
+  "theme_color": "#f3eee6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

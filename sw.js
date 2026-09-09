@@ -1,9 +1,10 @@
-const CACHE_NAME = 'offpay-v1';
+const CACHE_NAME = 'offpay-v2';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './icon.svg'
+  './icon.svg',
+  './html5-qrcode.min.js'
 ];
 
 self.addEventListener('install', event => {
